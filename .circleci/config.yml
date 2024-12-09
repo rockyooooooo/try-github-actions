@@ -9,7 +9,8 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      - github-cli/setup
+      - github-cli/setup:
+          token: ${GITHUB_TOKEN}
       - run:
           name: Generate and create tag
           command: |
