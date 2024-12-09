@@ -16,7 +16,7 @@ jobs:
       - run:
           name: Generate and create tag
           command: |
-             # 確認當前分支是 production
+            # 確認當前分支是 production
             if [ "$CIRCLE_BRANCH" != "production" ]; then
               echo "Not on production branch, skipping release"
               exit 0
