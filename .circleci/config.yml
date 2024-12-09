@@ -4,7 +4,7 @@ orbs:
   github-cli: circleci/github-cli@2.2
 
 jobs:
-  create-release:
+  tag-and-release:
     docker:
       - image: cimg/base:stable
     environment:
@@ -16,6 +16,12 @@ jobs:
       - run:
           name: Generate and create tag
           command: |
+             # 確認當前分支是 production
+            if [ "$CIRCLE_BRANCH" != "production" ]; then
+              echo "Not on production branch, skipping release"
+              exit 0
+            fi
+
             # Generate tag based on date (vYYYYMMDD.N format)
             DATE=$(date +'%Y%m%d')
             
@@ -26,10 +32,7 @@ jobs:
               # No tag exists for today, create first one
               NEW_TAG="v$DATE.1"
             else
-              # Increment the countesteps:
-                - add_ssh_keys:
-                    fingerprints:
-                      - "SHA256:pViM3yfZ+touHE7alv67G/B67D0hdaag8a9z5b6TPE8"
+              # Increment the counter
               COUNTER=$(echo $LATEST_TAG | awk -F'.' '{print $NF}')
               NEXT_COUNTER=$((COUNTER + 1))
               NEW_TAG="v$DATE.$NEXT_COUNTER"
@@ -50,9 +53,9 @@ jobs:
 
 workflows:
   version: 2
-  create-tag-and-release:
+  release-on-merge:
     jobs:
-      - create-release:
+      - tag-and-release:
           filters:
             branches:
               only: production
