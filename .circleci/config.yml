@@ -12,7 +12,7 @@ jobs:
     steps:
       - checkout
       - github-cli/setup:
-          token: $GH_TOKEN
+          token: GH_TOKEN
       - run:
           name: Generate and create tag
           command: |
