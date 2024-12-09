@@ -13,22 +13,22 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: Generate version tag
         id: generate_tag
         run: |
           # Generate tag based on date (vYYYYMMDD.N format)
           DATE=$(date +'%Y%m%d')
-          
+
           # Get the latest tag for today (if any)
           LATEST_TAG=$(git tag -l "v$DATE.*" | sort -V | tail -n 1)
-          
+
           if [ -z "$LATEST_TAG" ]; then
             # No tag exists for today, create first one
             NEW_TAG="v$DATE.1"
@@ -38,7 +38,7 @@ jobs:
             NEXT_COUNTER=$((COUNTER + 1))
             NEW_TAG="v$DATE.$NEXT_COUNTER"
           fi
-          
+
           echo "Generated new tag: $NEW_TAG"
           echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
 
@@ -51,7 +51,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.generate_tag.outputs.new_tag }}
-          name: Release ${{ steps.generate_tag.outputs.new_tag }}
+          name: ${{ steps.generate_tag.outputs.new_tag }}
           draft: false
           prerelease: false
           generate_release_notes: true
