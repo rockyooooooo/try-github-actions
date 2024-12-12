@@ -8,11 +8,23 @@ jobs:
     docker:
       - image: cimg/base:stable
     environment:
-      GH_TOKEN: ${GITHUB_TOKEN}
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
     steps:
       - checkout
       - github-cli/setup:
-          token: GH_TOKEN
+          token: GITHUB_TOKEN
+      - run:
+          name: Check GitHub CLI Authentication
+          command: |
+            gh auth status
+      - run:
+          name: Test GitHub CLI login
+          command: |
+            echo $GITHUB_TOKEN | gh auth login --with-token
+      - run:
+          name: Check GitHub CLI Authentication again
+          command: |
+            gh auth status
       - run:
           name: Generate and create tag
           command: |
