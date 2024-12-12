@@ -11,5 +11,6 @@ workflows:
             branches:
               only:
                 - production
+          notes-file: changelog.md
           tag: 1.0.0
           title: The initial release
