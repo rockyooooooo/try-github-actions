@@ -18,25 +18,24 @@ jobs:
       - run:
           name: Generate and create tag
           command: |
-            # Generate tag based on date (vYYYYMMDD.N format)
             DATE=$(date +'%Y%m%d')
-            
+
             # Get the latest tag for today (if any)
             LATEST_TAG=$(git tag -l "v$DATE.*" | sort -V | tail -n 1)
-            
+
             if [ -z "$LATEST_TAG" ]; then
-              # No tag exists for today, create first one
-              NEW_TAG="v$DATE.1"
+              # No tag exists for today, create a tag in vYYYYMMDD format
+              NEW_TAG="v$DATE"
             else
-              # Increment the counter
+              # Increment the counter for existing tags
               COUNTER=$(echo $LATEST_TAG | awk -F'.' '{print $NF}')
               NEXT_COUNTER=$((COUNTER + 1))
               NEW_TAG="v$DATE.$NEXT_COUNTER"
             fi
-            
+
             echo "Generated new tag: $NEW_TAG"
             echo "export NEW_TAG=$NEW_TAG" >> $BASH_ENV
-            
+
             # Create and push tag
             git tag $NEW_TAG
             git push origin $NEW_TAG
