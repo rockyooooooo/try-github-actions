@@ -56,7 +56,7 @@ jobs:
 workflows:
   use-my-orb:
     jobs:
-      - tag-and-release
+      - tag-and-release:
           filters:
             branches:
-              only: p
+              only: production
