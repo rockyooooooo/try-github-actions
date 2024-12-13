@@ -1,16 +1,56 @@
 version: '2.1'
 orbs:
   gh: circleci/github-cli@2.6
+jobs:
+  tag-and-release:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - gh/install
+      - run:
+          name: Check GitHub CLI Authentication
+          command: |
+            gh auth status
+      - run:
+          name: Test GitHub CLI login
+          command: |
+            echo $GITHUB_TOKEN | gh auth login --with-token
+      - run:
+          name: Check GitHub CLI Authentication again
+          command: |
+            gh auth status
+      - run:
+          name: Generate and create tag
+          command: |
+            # Generate tag based on date (vYYYYMMDD.N format)
+            DATE=$(date +'%Y%m%d')
+            
+            # Get the latest tag for today (if any)
+            LATEST_TAG=$(git tag -l "v$DATE.*" | sort -V | tail -n 1)
+            
+            if [ -z "$LATEST_TAG" ]; then
+              # No tag exists for today, create first one
+              NEW_TAG="v$DATE.1"
+            else
+              # Increment the counter
+              COUNTER=$(echo $LATEST_TAG | awk -F'.' '{print $NF}')
+              NEXT_COUNTER=$((COUNTER + 1))
+              NEW_TAG="v$DATE.$NEXT_COUNTER"
+            fi
+            
+            echo "Generated new tag: $NEW_TAG"
+            echo "export NEW_TAG=$NEW_TAG" >> $BASH_ENV
+            
+            # Create and push tag
+            git tag $NEW_TAG
+            git push origin $NEW_TAG
+      - run:
+          name: Create GitHub Release
+          command: |
+            gh release create $NEW_TAG \
+              --title $NEW_TAG \
+              --generate-notes
 workflows:
-  test-and-deploy:
+  use-my-orb:
     jobs:
-      - gh/release:
-          context:
-            - GITHUB_CREDS
-          filters:
-            branches:
-              only:
-                - production
-          notes-file: changelog.md
-          tag: 1.0.0
-          title: The initial release
+      - tag-and-release
