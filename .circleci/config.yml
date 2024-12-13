@@ -6,6 +6,7 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
+      - checkout
       - gh/install
       - run:
           name: Generate and create tag
