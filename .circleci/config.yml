@@ -7,6 +7,17 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
+      - run:
+          name: Set up SSH keys
+          command: |
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - run:
+          name: Test SSH key
+          command: |
+            ssh -T git@github.com
       - gh/install
       - run:
           name: Generate and create tag
