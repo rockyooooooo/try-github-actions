@@ -8,18 +8,6 @@ jobs:
     steps:
       - gh/install
       - run:
-          name: Check GitHub CLI Authentication
-          command: |
-            gh auth status
-      - run:
-          name: Test GitHub CLI login
-          command: |
-            echo $GITHUB_TOKEN | gh auth login --with-token
-      - run:
-          name: Check GitHub CLI Authentication again
-          command: |
-            gh auth status
-      - run:
           name: Generate and create tag
           command: |
             # Generate tag based on date (vYYYYMMDD.N format)
