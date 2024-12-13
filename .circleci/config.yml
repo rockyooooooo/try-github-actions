@@ -1,46 +1,49 @@
-version: 2.1
-
+version: '2.1'
 orbs:
-  github-cli: circleci/github-cli@2.2
-
+  gh: circleci/github-cli@2.6
 jobs:
   tag-and-release:
     docker:
       - image: cimg/base:stable
-    environment:
-      GH_TOKEN: ${GITHUB_TOKEN}
     steps:
       - checkout
-      - github-cli/setup:
-          token: GH_TOKEN
+      - run:
+          name: Set up SSH keys
+          command: |
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - gh/install
       - run:
           name: Generate and create tag
           command: |
-            # 確認當前分支是 production
-            if [ "$CIRCLE_BRANCH" != "production" ]; then
-              echo "Not on production branch, skipping release"
-              exit 0
+            DATE=$(date +'%Y%m%d')
+
+            # Check if there are any tags for today (including cases with and without suffix)
+            BASE_TAG="v$DATE"
+            ALL_TAGS=$(git tag -l "$BASE_TAG*" | sort -V)
+
+            if [ -z "$ALL_TAGS" ]; then
+              # No tags for today, create the first tag
+              NEW_TAG="$BASE_TAG"
+            else
+              # Tags already exist, get the latest tag
+              LATEST_TAG=$(echo "$ALL_TAGS" | tail -n 1)
+              if [[ "$LATEST_TAG" == "$BASE_TAG" ]]; then
+                # If the latest tag has no suffix, use .1
+                NEW_TAG="${BASE_TAG}.1"
+              else
+                # Extract the suffix number and increment it by 1
+                COUNTER=$(echo "$LATEST_TAG" | awk -F'.' '{print $NF}')
+                NEXT_COUNTER=$((COUNTER + 1))
+                NEW_TAG="${BASE_TAG}.$NEXT_COUNTER"
+              fi
             fi
 
-            # Generate tag based on date (vYYYYMMDD.N format)
-            DATE=$(date +'%Y%m%d')
-            
-            # Get the latest tag for today (if any)
-            LATEST_TAG=$(git tag -l "v$DATE.*" | sort -V | tail -n 1)
-            
-            if [ -z "$LATEST_TAG" ]; then
-              # No tag exists for today, create first one
-              NEW_TAG="v$DATE.1"
-            else
-              # Increment the counter
-              COUNTER=$(echo $LATEST_TAG | awk -F'.' '{print $NF}')
-              NEXT_COUNTER=$((COUNTER + 1))
-              NEW_TAG="v$DATE.$NEXT_COUNTER"
-            fi
-            
             echo "Generated new tag: $NEW_TAG"
             echo "export NEW_TAG=$NEW_TAG" >> $BASH_ENV
-            
+
             # Create and push tag
             git tag $NEW_TAG
             git push origin $NEW_TAG
@@ -50,12 +53,7 @@ jobs:
             gh release create $NEW_TAG \
               --title $NEW_TAG \
               --generate-notes
-
 workflows:
-  version: 2
-  release-on-merge:
+  use-my-orb:
     jobs:
-      - tag-and-release:
-          filters:
-            branches:
-              only: production
+      - tag-and-release
