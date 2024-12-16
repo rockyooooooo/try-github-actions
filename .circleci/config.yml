@@ -31,7 +31,7 @@ jobs:
             DATE=$(date +'%Y%m%d')
 
             # Check if there are any tags for today (including cases with and without suffix)
-            BASE_TAG="v$DATE"
+            BASE_TAG="test-v$DATE"
             ALL_TAGS=$(git tag -l "$BASE_TAG*" | sort -V)
 
             if [ -z "$ALL_TAGS" ]; then
