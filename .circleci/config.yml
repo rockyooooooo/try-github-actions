@@ -2,6 +2,16 @@ version: '2.1'
 orbs:
   gh: circleci/github-cli@2.6
 jobs:
+  test:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Run tests
+          command: |
+            npm install
+            npm test
   tag-and-release:
     docker:
       - image: cimg/base:stable
@@ -54,9 +64,14 @@ jobs:
               --title $NEW_TAG \
               --generate-notes
 workflows:
-  use-my-orb:
+  test:
+    jobs:
+      - test
+  test-and-release:
     jobs:
       - tag-and-release:
+          requiers:
+            - test
           filters:
             branches:
               only: production
