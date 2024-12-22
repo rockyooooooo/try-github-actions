@@ -68,7 +68,7 @@ jobs:
       - image: curlimages/curl:latest
     steps:
       - run:
-        name: Trigger GitHub Actions
+          name: Trigger GitHub Actions
           command: |
             curl -X POST \
               -H "Accept: application/vnd.github.v3+json" \
