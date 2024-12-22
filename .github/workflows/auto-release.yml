@@ -1,15 +1,17 @@
 name: Auto Tag and Release
 
+# on:
+#   pull_request:
+#     types: [closed]
+#     branches:
+#       - production
 on:
-  pull_request:
-    types: [closed]
-    branches:
-      - production
+  workflow_dispatch:
 
 jobs:
   create-tag-and-release:
     # Only run this job if the PR was merged (not just closed)
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
