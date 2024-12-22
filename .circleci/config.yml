@@ -63,11 +63,30 @@ jobs:
             gh release create $NEW_TAG \
               --title $NEW_TAG \
               --generate-notes
+  trigger-github-actions:
+    docker:
+      - image: curlimages/curl:latest
+    steps:
+      - run:
+        name: Trigger GitHub Actions
+          command: |
+            curl -X POST \
+              -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: token ${GITHUB_TOKEN}" \
+              https://api.github.com/repos/rockyoooooooo/try-github-actions/actions/workflows/auto-release.yml/dispatches \
+              -d '{"ref":"production"}'
+
 workflows:
   test-and-release:
     jobs:
       - test
-      - tag-and-release:
+      # - tag-and-release:
+      #     requires:
+      #       - test
+      #     filters:
+      #       branches:
+      #         only: production
+      - trigger-github-actions:
           requires:
             - test
           filters:
