@@ -1,10 +1,12 @@
 name: Auto Tag and Release
 
+# on:
+#   pull_request:
+#     types: [closed]
+#     branches:
+#       - production
 on:
-  pull_request:
-    types: [closed]
-    branches:
-      - production
+  workflow_dispatch:
 
 jobs:
   create-tag-and-release:
