@@ -66,7 +66,7 @@ jobs:
     steps:
       - name: Slack Notification
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ needs.create-tag-and-release.outputs.new_tag }} omnitag deployed \n https://github.com/rockyooooooo/try-github-actions/releases/tag/${{ needs.create-tag-and-release.outputs.new_tag }}"}' https://hooks.slack.com/services/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<D-z>
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ needs.create-tag-and-release.outputs.new_tag }} omnitag deployed \n https://github.com/rockyooooooo/try-github-actions/releases/tag/${{ needs.create-tag-and-release.outputs.new_tag }}"}' ${{ secrets.SLACK_WEBHOOK }}
       # - uses: actions/checkout@v4
       #   uses: rtCamp/action-slack-notify@v2
       #   env:
