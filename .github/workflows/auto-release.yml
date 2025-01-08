@@ -64,9 +64,11 @@ jobs:
     needs: create-tag-and-release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - name: Slack Notification
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_MESSAGE: "${{ needs.create-tag-and-release.outputs.new_tag }} omnitag deployed \n https://github.com/rockyooooooo/try-github-actions/releases/tag/${{ needs.create-tag-and-release.outputs.new_tag }}"
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"${{ needs.create-tag-and-release.outputs.new_tag }} omnitag deployed \n https://github.com/rockyooooooo/try-github-actions/releases/tag/${{ needs.create-tag-and-release.outputs.new_tag }}"}' https://hooks.slack.com/services/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<D-z>
+      # - uses: actions/checkout@v4
+      #   uses: rtCamp/action-slack-notify@v2
+      #   env:
+      #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      #     SLACK_MESSAGE: "${{ needs.create-tag-and-release.outputs.new_tag }} omnitag deployed \n https://github.com/rockyooooooo/try-github-actions/releases/tag/${{ needs.create-tag-and-release.outputs.new_tag }}"
