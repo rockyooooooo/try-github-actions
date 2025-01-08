@@ -69,4 +69,4 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_MESSAGE: "${{ needs.create-tag-and-release.outputs.new_tag }} omnitag deployed \n https://github.com/beBit-tech/omnitag/releases/tag/${{ needs.create-tag-and-release.outputs.new_tag }}"
+          SLACK_MESSAGE: "${{ needs.create-tag-and-release.outputs.new_tag }} omnitag deployed \n https://github.com/rockyooooooo/try-github-actions/releases/tag/${{ needs.create-tag-and-release.outputs.new_tag }}"
