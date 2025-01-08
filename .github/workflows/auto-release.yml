@@ -58,7 +58,7 @@ jobs:
           prerelease: false
           generate_release_notes: true
     outputs:
-      new_tag: steps.generate_tag.outputs.new_tag
+      new_tag: ${{ steps.generate_tag.outputs.new_tag }}
   slack-notification:
     name: Slack Notification
     needs: create-tag-and-release
