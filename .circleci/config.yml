@@ -118,16 +118,17 @@ jobs:
 workflows:
   test-and-release:
     jobs:
-      - test
+      # - test
       # - tag-and-release:
       #     requires:
       #       - test
       #     filters:
       #       branches:
       #         only: production
-      - trigger-github-actions:
-          requires:
-            - test
-          filters:
-            branches:
-              only: production
+      # - trigger-github-actions:
+      #     requires:
+      #       - test
+      #     filters:
+      #       branches:
+      #         only: production
+      - get-github-pr-target-branch:
