@@ -119,8 +119,8 @@ workflows:
     jobs:
       # - test
       - tag-and-release:
-          requires:
-            - test
+          # requires:
+          #   - test
           filters:
             branches:
               only: production
