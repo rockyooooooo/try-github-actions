@@ -55,6 +55,7 @@ jobs:
             echo "Generated new tag: $NEW_TAG"
             echo "export NEW_TAG=$NEW_TAG" >> $BASH_ENV
 
+            # git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/allenliaooooooo/try-github-actions.git
             # Create and push tag
             git tag $NEW_TAG
             git push origin $NEW_TAG
@@ -117,16 +118,16 @@ workflows:
   test-and-release:
     jobs:
       # - test
-      # - tag-and-release:
-      #     requires:
-      #       - test
-      #     filters:
-      #       branches:
-      #         only: production
+      - tag-and-release:
+          requires:
+            - test
+          filters:
+            branches:
+              only: production
       # - trigger-github-actions:
       #     requires:
       #       - test
       #     filters:
       #       branches:
       #         only: production
-      - get-github-pr-target-branch
+      # - get-github-pr-target-branch
