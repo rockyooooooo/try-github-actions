@@ -1,0 +1,38 @@
+pipeline:
+  name: first pipeline
+  identifier: first_pipeline
+  projectIdentifier: default_project
+  orgIdentifier: default
+  tags: {}
+  stages:
+    - stage:
+        name: Matrix Minimal Test
+        identifier: Matrix_Minimal_Test
+        description: ""
+        type: Custom
+        spec:
+          execution:
+            steps:
+              - step:
+                  type: ShellScript
+                  name: Print Matrix Variable
+                  identifier: Print_Matrix_Variable
+                  spec:
+                    shell: Bash
+                    executionTarget: {}
+                    source:
+                      type: Inline
+                      spec:
+                        script: |-
+                          echo "MY_TEST_VAR (shell) is - $MY_TEST_VAR"
+                          echo "MY_TEST_VAR (Drone syntax) is - $${MY_TEST_VAR}" # 通常 matrix 變數用 $VAR
+                          env # 打印所有環境變數，方便檢查
+                    environmentVariables: []
+                    outputVariables: []
+                  timeout: 10m
+        tags: {}
+        strategy:
+          matrix:
+            MY_TEST_VAR:
+              - alpha
+              - beta
